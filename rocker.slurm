@@ -71,7 +71,7 @@ When done using RStudio Server, terminate the job by:
       scancel -f ${SLURM_JOB_ID}
 END
 
-singularity exec --cleanenv verse_4.1.0.sif \
+singularity exec --cleanenv docker://eandersk/r_microbiome \
     rserver --www-port ${PORT} \
             --auth-none=0 \
             --auth-pam-helper-path=pam-helper \

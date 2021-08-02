@@ -8,7 +8,7 @@ The Dockerfile is based on the Rocker/verse container to handle the basics of in
 The Dockerfile is pretty interpretable in terms of what packages are installed. Over time I may add packages, but packages likely won't be removed unless there is a compelling reason.
 
 ## Usage
-This container can be accessed from [DockerHub](https://hub.docker.com/r/eandersk/r_microbiome) and pulled with `docker pull eandersk/r_microbiome`.
+This container can be accessed from [DockerHub](https://hub.docker.com/r/eandersk/r_microbiome).
 
 It can be run on BIOMIX using the `rocker.slurm` script included in this directory. Other users will have to modify the `SINGULARITY_BIND` argument of the script, as the version here includes a few user specific mounts for shared storage and work directories. You may also want to change the resources & time requested from SLURM. This script requires singularity (HPC-focused docker alternative) that can be installed with [conda](https://anaconda.org/conda-forge/singularity). When run (`sbatch rocker.slurm`), a file (`rstudio-server.job.{JOBID}`) is created in the home directory with usage/connection instructions.
 
