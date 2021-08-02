@@ -18,3 +18,7 @@ Snakemake workflows built with this image in mind can be run with the `--use-sin
 I manage most other bioinformatics tools with Conda, but that gets pretty messy with R & R-package installations.
 
 I primarily intend this to be used interactively (locally & on BIOMIX, the University of Delaware HPC) through RStudio. However, I also use it in Snakemake pipelines to handle any rules that use R.
+
+## Building instructions
+To build: `docker build -t eandersk/r_microbiome .`
+To push : `docker push eandersk/r_microbiome`

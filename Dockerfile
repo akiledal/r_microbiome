@@ -1,4 +1,4 @@
-FROM rocker/verse
+FROM rocker/geospatial
 LABEL maintainer="Anders Kiledal <akiledal@udel.edu>"
 
 # Install other libraries
@@ -7,7 +7,7 @@ RUN install2.r --error \
         igraph Matrix data.table VennDiagram eulerr UpSetR Cairo ragg glue ggtext \
         pheatmap forcats vroom future.apply indicspecies permute xlsx magick \
         lubridate scales ggpubr lme4 lmerTest MuMIn gridExtra gtable ggalluvial \
-        mgcv reshape2 viridis ggridges ggforce ggmap mapdata maps \
+        mgcv reshape2 viridis ggridges ggforce ggmap maps tigris \
     && R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "microbiome", "metagenomeSeq", "decontam", "limma", "biomformat", "ALDEx2", "DESeq2", "ggtree")); \
         devtools::install_github("tpq/propr"); \
