@@ -19,6 +19,10 @@ I manage most other bioinformatics tools with Conda, but that gets pretty messy 
 
 I primarily intend this to be used interactively (locally & on BIOMIX, the University of Delaware HPC) through RStudio. However, I also use it in Snakemake pipelines to handle any rules that use R.
 
-## Building instructions
+## Building instructions (typical)
 To build: `docker build -t eandersk/r_microbiome .`
 To push : `docker push eandersk/r_microbiome`
+
+## Building instructions on apple silicon, for amd64
+Rstudio does not yet run natively on arm64.
+Build and push: `docker buildx build --platform linux/amd64 --push -t eandersk/r_microbiome .`
