@@ -1,7 +1,15 @@
 FROM rocker/geospatial
 LABEL maintainer="Anders Kiledal <akiledal@udel.edu>"
 
-# Install other libraries
+# Install oligoarray for DECIPHER R package (needed for PCR primer design)
+RUN wget http://www.unafold.org/download/oligoarrayaux-3.8.tar.gz && \
+    tar xzf oligoarrayaux-3.8.tar.gz && \
+    cd oligoarrayaux-3.8 && \
+    ./configure && \
+    make && \
+    sudo make install
+
+# Install other R libraries
 RUN install2.r --error \
         here vegan patchwork ggrepel foreach BiocManager DiagrammeR ggbeeswarm corrr \
         igraph Matrix data.table VennDiagram eulerr UpSetR Cairo ragg glue ggtext furrr \
