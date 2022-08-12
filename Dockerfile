@@ -1,6 +1,9 @@
 FROM rocker/geospatial
 LABEL maintainer="Anders Kiledal <akiledal@udel.edu>"
 
+# To enable remote file access
+RUN sudo apt update && sudo apt install -y fuse rclone
+
 # Install oligoarray for DECIPHER R package (needed for PCR primer design)
 RUN wget http://www.unafold.org/download/oligoarrayaux-3.8.tar.gz && \
     tar xzf oligoarrayaux-3.8.tar.gz && \
@@ -15,7 +18,7 @@ RUN install2.r --error \
         igraph Matrix data.table VennDiagram eulerr UpSetR Cairo ragg glue ggtext furrr \
         pheatmap forcats vroom future.apply indicspecies permute xlsx magick usedist \
         lubridate scales ggpubr lme4 lmerTest MuMIn gridExtra gtable ggalluvial gdata TreeDist \
-        mgcv reshape2 viridis ggridges ggforce ggmap maps tigris plotly concaveman heatmaply \
+        mgcv reshape2 viridis ggridges ggforce ggmap maps tigris plotly concaveman heatmaply arrow \
     && R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "microbiome", "metagenomeSeq", "decontam", "limma", "biomformat", "ALDEx2", "DESeq2", "ggtree", \
         "KEGGgraph","org.Hs.eg.db", "KEGGREST", "AnnotationDbi", "pcaMethods", "DECIPHER")); \
