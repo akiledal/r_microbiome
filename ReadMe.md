@@ -24,5 +24,5 @@ To build: `docker build -t eandersk/r_microbiome .`
 To push : `docker push eandersk/r_microbiome`
 
 ## Building instructions on apple silicon, for amd64
-Rstudio does not yet run natively on arm64.
-Build and push: `docker buildx build --platform linux/amd64 --push -t eandersk/r_microbiome .`
+You can build x86 containers on a mac with apple silicon.
+To build on a newer mac and push to docker hub: `./build_and_push_on_appleSilicon.sh`
