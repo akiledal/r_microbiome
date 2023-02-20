@@ -11,9 +11,7 @@ export SINGULARITYENV_USER=$USER
 
 workdir=rstudio_server
 mkdir -p ${workdir}
-mkdir -p -m 700 ${workdir}/run ${workdir}/tmp ${workdir}/var/lib/rstudio-server
-
-.rstudio-desktop/
+mkdir -p -m 700 ${workdir}/run ${workdir}/tmp ${workdir}/var-lib-rstudio-server
 
 cat > ${workdir}/database.conf <<END
 provider=sqlite
