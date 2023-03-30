@@ -35,5 +35,7 @@ RUN R -e 'devtools::install_github("mikemc/speedyseq"); \
         devtools::install_github("fbreitwieser/pavian"); \
         devtools::install_github("grunwaldlab/metacoder"); \
         devtools::install_github("vmikk/metagMisc"); \
-        devtools::install_github("https://github.com/eqkuiper/ANCOMBC", ref="RELEASE_3_16", quiet = FALSE)'
+        devtools::install_github("https://github.com/eqkuiper/ANCOMBC", ref="RELEASE_3_16", quiet = FALSE); \
+        devtools::install_github("stevenpawley/recipeselectors"); \
+        devtools::install_github("d-mcgrath/MetaPathPredict/MetaPredict")'
     #&& install2.r --error pathfindR
