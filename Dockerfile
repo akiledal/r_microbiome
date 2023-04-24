@@ -22,7 +22,8 @@ RUN install2.r --error \
         pheatmap forcats vroom future.apply indicspecies permute xlsx magick usedist janitor \
         lubridate scales ggpubr lme4 lmerTest MuMIn gridExtra gtable ggalluvial gdata TreeDist \
         mgcv reshape2 viridis ggridges ggforce ggmap maps tigris plotly concaveman heatmaply arrow \
-        httpgd languageserver phytools ape unglue reticulate tidymodels PMA MonoPhy ggnewscale umap
+        httpgd languageserver phytools ape unglue reticulate tidymodels PMA MonoPhy ggnewscale umap \
+        gganimate
 
 RUN R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "microbiome", "metagenomeSeq", "decontam", "limma", "biomformat", "ALDEx2", "DESeq2", "ggtree", \
