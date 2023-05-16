@@ -23,11 +23,11 @@ RUN install2.r --error \
         lubridate scales ggpubr lme4 lmerTest MuMIn gridExtra gtable ggalluvial gdata TreeDist \
         mgcv reshape2 viridis ggridges ggforce ggmap maps tigris plotly concaveman heatmaply arrow \
         httpgd languageserver phytools ape unglue reticulate tidymodels PMA MonoPhy ggnewscale umap \
-        gganimate av gifski transformr
+        gganimate av gifski transformr qs
 
 RUN R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "microbiome", "metagenomeSeq", "decontam", "limma", "biomformat", "ALDEx2", "DESeq2", "ggtree", \
-        "KEGGgraph","org.Hs.eg.db", "KEGGREST", "AnnotationDbi", "pcaMethods", "DECIPHER", "ANCOMBC", "fgsea"))'
+        "KEGGgraph","org.Hs.eg.db", "KEGGREST", "AnnotationDbi", "pcaMethods", "DECIPHER", "ANCOMBC", "fgsea", "topGO"))'
         
 RUN R -e 'devtools::install_github("mikemc/speedyseq"); \
         devtools::install_github("tpq/propr"); \
@@ -40,3 +40,5 @@ RUN R -e 'devtools::install_github("mikemc/speedyseq"); \
         devtools::install_github("stevenpawley/recipeselectors"); \
         devtools::install_github("d-mcgrath/MetaPathPredict/MetaPredict")'
     #&& install2.r --error pathfindR
+
+RUN install2.r --error POMS
