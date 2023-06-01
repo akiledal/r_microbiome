@@ -23,7 +23,7 @@ RUN install2.r --error \
         lubridate scales ggpubr lme4 lmerTest MuMIn gridExtra gtable ggalluvial gdata TreeDist \
         mgcv reshape2 viridis ggridges ggforce ggmap maps tigris plotly concaveman heatmaply arrow \
         httpgd languageserver phytools ape unglue reticulate tidymodels PMA MonoPhy ggnewscale umap \
-        gganimate av gifski transformr qs ranger
+        gganimate av gifski transformr qs ranger dbscan fpc
 
 RUN R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "microbiome", "metagenomeSeq", "decontam", "limma", "biomformat", "ALDEx2", "DESeq2", "ggtree", \
