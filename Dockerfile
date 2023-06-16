@@ -23,7 +23,7 @@ RUN install2.r --error \
         lubridate scales ggpubr lme4 lmerTest MuMIn gridExtra gtable ggalluvial gdata TreeDist \
         mgcv reshape2 viridis ggridges ggforce ggmap maps tigris plotly concaveman heatmaply arrow \
         httpgd languageserver phytools ape unglue reticulate tidymodels PMA MonoPhy ggnewscale umap \
-        gganimate av gifski transformr qs ranger dbscan fpc
+        gganimate av gifski transformr qs ranger dbscan fpc POMS vip RPostgreSQL
 
 RUN R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "microbiome", "metagenomeSeq", "decontam", "limma", "biomformat", "ALDEx2", "DESeq2", "ggtree", \
@@ -41,4 +41,5 @@ RUN R -e 'devtools::install_github("mikemc/speedyseq"); \
         devtools::install_github("d-mcgrath/MetaPathPredict/MetaPredict")'
     #&& install2.r --error pathfindR
 
-RUN install2.r --error POMS
+# If you want to just add a package or two to a recently built image, much faster to add them as new layers here before migrating into the main step
+#RUN install2.r --error 
