@@ -25,7 +25,7 @@ singularity exec \
     --env RSTUDIO_WHICH_R=/usr/local/bin/R \
     --env SINGULARITYENV_PASSWORD=r_login \
     --env SINGULARITYENV_USER=$USER \
-    --bind /geomicro:/geomicro,/nfs/turbo/lsa-Erie:/nfs/turbo/lsa-Erie,${workdir}/run:/run,${workdir}/var-lib-rstudio-server:/var/lib/rstudio-server,${workdir}/database.conf:/etc/rstudio/database.conf \
+    --bind /geomicro:/geomicro,/nfs:/nfs,${workdir}/run:/run,${workdir}/var-lib-rstudio-server:/var/lib/rstudio-server,${workdir}/database.conf:/etc/rstudio/database.conf \
     --cleanenv \
     docker://eandersk/r_microbiome \
     rserver --www-address=127.0.0.1 \
