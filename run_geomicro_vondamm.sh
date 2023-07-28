@@ -10,7 +10,7 @@ export SINGULARITYENV_PASSWORD="r_login"
 export SINGULARITYENV_USER=$USER
 export XDG_DATA_HOME=$HOME/rstudio_server/$HOSTNAME
 
-workdir=/tmp/${USER}_rstudio_server
+workdir=/tmp/${USER}_rstudio_server_vondamm
 mkdir -p ${workdir}
 mkdir -p -m 700 ${workdir}/run ${workdir}/tmp ${workdir}/var-lib-rstudio-server
 
@@ -25,7 +25,7 @@ singularity exec \
     --env RSTUDIO_WHICH_R=/usr/local/bin/R \
     --env SINGULARITYENV_PASSWORD=r_login \
     --env SINGULARITYENV_USER=$USER \
-    --bind /geomicro:/geomicro,/nfs:/nfs,${workdir}/run:/run,${workdir}/var-lib-rstudio-server:/var/lib/rstudio-server,${workdir}/database.conf:/etc/rstudio/database.conf \
+    --bind /geomicro:/geomicro,/nfs/turbo/lsa-Erie:/nfs/turbo/lsa-Erie,${workdir}/run:/run,${workdir}/var-lib-rstudio-server:/var/lib/rstudio-server,${workdir}/database.conf:/etc/rstudio/database.conf \
     --cleanenv \
     docker://eandersk/r_microbiome \
     rserver --www-address=127.0.0.1 \
@@ -34,4 +34,4 @@ singularity exec \
         --auth-stay-signed-in-days=30 \
         --auth-timeout-minutes=0 \
         --server-user=$USER \
-        --www-port 8787
+        --www-port 8383
