@@ -12,7 +12,7 @@ export XDG_DATA_HOME=$HOME/rstudio_server/$HOSTNAME
 
 workdir=/tmp/${USER}_rstudio_server
 mkdir -p ${workdir}
-mkdir -p -m 700 ${workdir}/run ${workdir}/tmp ${workdir}/var-lib-rstudio-server
+mkdir -p -m 700 ${workdir}/run ${workdir}/tmp ${workdir}/var-lib-rstudio-server $XDG_DATA_HOME
 
 cat > ${workdir}/database.conf <<END
 provider=sqlite
@@ -25,7 +25,7 @@ singularity exec \
     --env RSTUDIO_WHICH_R=/usr/local/bin/R \
     --env SINGULARITYENV_PASSWORD=r_login \
     --env SINGULARITYENV_USER=$USER \
-    --bind /geomicro:/geomicro,/nfs:/nfs,${workdir}/run:/run,${workdir}/var-lib-rstudio-server:/var/lib/rstudio-server,${workdir}/database.conf:/etc/rstudio/database.conf \
+    --bind /geomicro:/geomicro,/nfs:/nfs,${workdir}/run:/run,${workdir}/var-lib-rstudio-server:/var/lib/rstudio-server,${workdir}/database.conf:/etc/rstudio/database.conf,/etc/group:/etc/group,/etc/passwd:/etc/passwd \
     --cleanenv \
     docker://eandersk/r_microbiome \
     rserver --www-address=127.0.0.1 \

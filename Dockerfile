@@ -2,6 +2,9 @@
 FROM rocker/verse
 LABEL maintainer="Anders Kiledal <akiledal@udel.edu>"
 
+# Install the geospatial packages here, rather than relying on the pre-built geospatial release
+RUN /bin/sh -c /rocker_scripts/install_geospatial.sh # buildkit
+
 # To enable remote file access
 RUN sudo apt update && sudo apt install -y fuse rclone python3-pip
 
@@ -24,7 +27,8 @@ RUN install2.r --error \
         lubridate scales ggpubr lme4 lmerTest MuMIn gridExtra gtable ggalluvial gdata TreeDist \
         mgcv reshape2 viridis ggridges ggforce ggmap maps tigris plotly concaveman heatmaply arrow \
         httpgd languageserver phytools ape unglue reticulate tidymodels PMA MonoPhy ggnewscale umap \
-        gganimate av gifski transformr qs ranger dbscan fpc POMS vip RPostgreSQL kableExtra
+        gganimate av gifski transformr qs ranger dbscan fpc POMS vip RPostgreSQL kableExtra ggprism \
+        openssl picante geomtextpath
 
 RUN R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "microbiome", "metagenomeSeq", "decontam", "limma", "biomformat", "ALDEx2", "DESeq2", "ggtree", \
@@ -37,10 +41,10 @@ RUN R -e 'devtools::install_github("mikemc/speedyseq"); \
         devtools::install_github("fbreitwieser/pavian"); \
         devtools::install_github("grunwaldlab/metacoder"); \
         devtools::install_github("vmikk/metagMisc"); \
-        devtools::install_github("stevenpawley/recipeselectors"); \
-        devtools::install_github("d-mcgrath/MetaPathPredict/MetaPredict")'
+        devtools::install_github("stevenpawley/colino")'
 
-    #devtools::install_github("https://github.com/eqkuiper/ANCOMBC", ref="RELEASE_3_16", quiet = FALSE); \
+#devtools::install_github("d-mcgrath/MetaPathPredict/MetaPredict") # Seems like this was converted to a python project?
+#devtools::install_github("https://github.com/eqkuiper/ANCOMBC", ref="RELEASE_3_16", quiet = FALSE); \
 
 # If you want to just add a package or two to a recently built image, much faster to add them as new layers here before migrating into the main step
 #RUN install2.r --error 
