@@ -1,9 +1,10 @@
-#FROM rocker/geospatial
-FROM rocker/verse
+FROM rocker/geospatial
+#FROM rocker/verse
 LABEL maintainer="Anders Kiledal <akiledal@udel.edu>"
 
 # Install the geospatial packages here, rather than relying on the pre-built geospatial release
-RUN /bin/sh -c /rocker_scripts/install_geospatial.sh # buildkit
+# Used selectively when the rocker/geospatial builds are old
+#RUN /bin/sh -c /rocker_scripts/install_geospatial.sh # buildkit
 
 # To enable remote file access
 RUN sudo apt update && sudo apt install -y fuse rclone python3-pip
@@ -26,9 +27,11 @@ RUN install2.r --error \
         pheatmap forcats vroom future.apply indicspecies permute xlsx magick usedist janitor \
         lubridate scales ggpubr lme4 lmerTest MuMIn gridExtra gtable ggalluvial gdata TreeDist \
         mgcv reshape2 viridis ggridges ggforce ggmap maps tigris plotly concaveman heatmaply arrow \
-        httpgd languageserver phytools ape unglue reticulate tidymodels PMA MonoPhy ggnewscale umap \
+        languageserver phytools ape unglue reticulate tidymodels PMA MonoPhy ggnewscale umap \
         gganimate av gifski transformr qs ranger dbscan fpc POMS vip RPostgreSQL kableExtra ggprism \
-        openssl picante geomtextpath
+        openssl picante geomtextpath randomcoloR bio3d RcppAlgos
+
+        # httpgd being installed via GitHub temporarily because it was temporarily removed from CRAN
 
 RUN R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "microbiome", "metagenomeSeq", "decontam", "limma", "biomformat", "ALDEx2", "DESeq2", "ggtree", \
@@ -41,7 +44,8 @@ RUN R -e 'devtools::install_github("mikemc/speedyseq"); \
         devtools::install_github("fbreitwieser/pavian"); \
         devtools::install_github("grunwaldlab/metacoder"); \
         devtools::install_github("vmikk/metagMisc"); \
-        devtools::install_github("stevenpawley/colino")'
+        devtools::install_github("stevenpawley/colino"); \
+        devtools::install_github("nx10/httpgd")'
 
 #devtools::install_github("d-mcgrath/MetaPathPredict/MetaPredict") # Seems like this was converted to a python project?
 #devtools::install_github("https://github.com/eqkuiper/ANCOMBC", ref="RELEASE_3_16", quiet = FALSE); \
