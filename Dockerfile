@@ -35,7 +35,7 @@ RUN install2.r --error \
 
 RUN R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "microbiome", "metagenomeSeq", "decontam", "limma", "biomformat", "ALDEx2", "DESeq2", "ggtree", \
-        "KEGGgraph","org.Hs.eg.db", "KEGGREST", "AnnotationDbi", "pcaMethods", "DECIPHER", "ANCOMBC", "fgsea", "topGO", "ANCOMBC"))'
+        "KEGGgraph","org.Hs.eg.db", "KEGGREST", "AnnotationDbi", "pcaMethods", "DECIPHER", "ANCOMBC", "fgsea", "topGO", "ANCOMBC", "gage","clusterProfiler"))'
         
 RUN R -e 'devtools::install_github("mikemc/speedyseq"); \
         devtools::install_github("tpq/propr"); \
