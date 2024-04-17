@@ -27,15 +27,15 @@ RUN install2.r --error \
         pheatmap forcats vroom future.apply indicspecies permute xlsx magick usedist janitor \
         lubridate scales ggpubr lme4 lmerTest MuMIn gridExtra gtable ggalluvial gdata TreeDist \
         mgcv reshape2 viridis ggridges ggforce ggmap maps tigris plotly concaveman heatmaply arrow \
-        languageserver phytools ape unglue reticulate tidymodels PMA MonoPhy ggnewscale umap \
+        languageserver phytools ape unglue reticulate tidymodels PMA ggnewscale umap \
         gganimate av gifski transformr qs ranger dbscan fpc POMS vip RPostgreSQL kableExtra ggprism \
-        openssl picante geomtextpath randomcoloR bio3d RcppAlgos
+        openssl picante geomtextpath randomcoloR bio3d RcppAlgos httpgd
 
-        # httpgd being installed via GitHub temporarily because it was temporarily removed from CRAN
+# MonoPhy no-longer available on CRAN [may be temporary]
 
 RUN R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "microbiome", "metagenomeSeq", "decontam", "limma", "biomformat", "ALDEx2", "DESeq2", "ggtree", \
-        "KEGGgraph","org.Hs.eg.db", "KEGGREST", "AnnotationDbi", "pcaMethods", "DECIPHER", "ANCOMBC", "fgsea", "topGO", "ANCOMBC", "gage","clusterProfiler"))'
+        "KEGGgraph","org.Hs.eg.db", "KEGGREST", "AnnotationDbi", "pcaMethods", "DECIPHER", "ANCOMBC", "fgsea", "topGO", "ANCOMBC", "gage","clusterProfiler", "pathview"))'
         
 RUN R -e 'devtools::install_github("mikemc/speedyseq"); \
         devtools::install_github("tpq/propr"); \
@@ -45,7 +45,24 @@ RUN R -e 'devtools::install_github("mikemc/speedyseq"); \
         devtools::install_github("grunwaldlab/metacoder"); \
         devtools::install_github("vmikk/metagMisc"); \
         devtools::install_github("stevenpawley/colino"); \
-        devtools::install_github("nx10/httpgd")'
+        devtools::install_github("r-dbi/odbc"); \
+        devtools::install_github("jiabowang/GAPIT", force=TRUE); \
+        devtools::install_github("oschwery/MonoPhy", force=TRUE)'
+
+ADD . /tmp/repo
+WORKDIR /tmp/repo
+ENV PATH /opt/conda/bin:${PATH}
+ENV LANG C.UTF-8
+ENV SHELL /bin/bash
+RUN /bin/bash -c "wget https://github.com/sylabs/singularity/releases/download/v4.1.2/singularity-ce_4.1.2-jammy_amd64.deb -O /tmp/singularity.deb && \
+    sudo apt install -y wget bzip2 ca-certificates gnupg2 squashfs-tools git /tmp/singularity.deb && \
+    wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    bash Miniconda3-latest-Linux-x86_64.sh -b -p /opt/conda && \
+    rm Miniconda3-latest-Linux-x86_64.sh && \
+    conda create -c conda-forge -n snakemake bioconda::snakemake bioconda::snakemake-minimal --only-deps && \
+    conda clean --all -y && \
+    source activate snakemake"
+
 
 #devtools::install_github("d-mcgrath/MetaPathPredict/MetaPredict") # Seems like this was converted to a python project?
 #devtools::install_github("https://github.com/eqkuiper/ANCOMBC", ref="RELEASE_3_16", quiet = FALSE); \
