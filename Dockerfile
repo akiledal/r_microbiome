@@ -29,7 +29,7 @@ RUN install2.r --error \
         mgcv reshape2 viridis ggridges ggforce ggmap maps tigris plotly concaveman heatmaply arrow \
         languageserver phytools ape unglue reticulate tidymodels PMA ggnewscale umap \
         gganimate av gifski transformr qs ranger dbscan fpc POMS vip RPostgreSQL kableExtra ggprism \
-        openssl picante geomtextpath randomcoloR bio3d RcppAlgos httpgd
+        openssl picante geomtextpath randomcoloR bio3d RcppAlgos httpgd ggh4x
 
 # MonoPhy no-longer available on CRAN [may be temporary]
 
