@@ -13,9 +13,9 @@ RUN sudo apt update && sudo apt install -y fuse rclone python3-pip
 RUN python3 -m pip install --user --upgrade cutadapt
 
 # Install oligoarray for DECIPHER R package (needed for PCR primer design)
-RUN wget http://www.unafold.org/download/oligoarrayaux-3.8.tar.gz && \
-    tar xzf oligoarrayaux-3.8.tar.gz && \
-    cd oligoarrayaux-3.8 && \
+RUN wget http://www.unafold.org/download/oligoarrayaux-3.8.1.tar.gz && \
+    tar xzf oligoarrayaux-3.8.1.tar.gz && \
+    cd oligoarrayaux-3.8.1 && \
     ./configure && \
     make && \
     sudo make install
@@ -29,7 +29,7 @@ RUN install2.r --error \
         mgcv reshape2 viridis ggridges ggforce ggmap maps tigris plotly concaveman heatmaply arrow \
         languageserver phytools ape unglue reticulate tidymodels PMA ggnewscale umap \
         gganimate av gifski transformr qs ranger dbscan fpc POMS vip RPostgreSQL kableExtra ggprism \
-        openssl picante geomtextpath randomcoloR bio3d RcppAlgos httpgd ggh4x
+        openssl picante geomtextpath randomcoloR bio3d RcppAlgos httpgd ggh4x scico
 
 # MonoPhy no-longer available on CRAN [may be temporary]
 
