@@ -19,7 +19,7 @@ provider=sqlite
 directory=/var/lib/rstudio-server
 END
 
-singularity exec \
+apptainer exec \
     --env XDG_DATA_HOME=$XDG_DATA_HOME \
     --env R_LIBS_USER=/usr/local/lib/R/site-library \
     --env RSTUDIO_WHICH_R=/usr/local/bin/R \
@@ -28,10 +28,13 @@ singularity exec \
     --bind /geomicro:/geomicro,/nfs:/nfs,${workdir}/run:/run,${workdir}/var-lib-rstudio-server:/var/lib/rstudio-server,${workdir}/database.conf:/etc/rstudio/database.conf,/etc/group:/etc/group,/etc/passwd:/etc/passwd \
     --cleanenv \
     docker://eandersk/r_microbiome \
-    rserver --www-address=127.0.0.1 \
+    rserver \
         --auth-none=0 \
         --auth-pam-helper-path=pam-helper \
         --auth-stay-signed-in-days=30 \
         --auth-timeout-minutes=0 \
         --server-user=$USER \
-        --www-port 8787
+        --www-port 4787
+
+# --www-address=127.0.0.1 # Use to access only from localhost via ssh port forwarding
+#--disable-cache \
