@@ -20,6 +20,7 @@ directory=/var/lib/rstudio-server
 END
 
 apptainer exec \
+    --disable-cache \
     --env XDG_DATA_HOME=$XDG_DATA_HOME \
     --env R_LIBS_USER=/usr/local/lib/R/site-library \
     --env RSTUDIO_WHICH_R=/usr/local/bin/R \
@@ -37,4 +38,3 @@ apptainer exec \
         --www-port 4787
 
 # --www-address=127.0.0.1 # Use to access only from localhost via ssh port forwarding
-#--disable-cache \
