@@ -1,4 +1,4 @@
-FROM rocker/geospatial
+FROM rocker/tidyverse:latest
 #FROM rocker/verse
 LABEL maintainer="Anders Kiledal <akiledal@udel.edu>"
 
@@ -7,10 +7,15 @@ LABEL maintainer="Anders Kiledal <akiledal@udel.edu>"
 #RUN /bin/sh -c /rocker_scripts/install_geospatial.sh # buildkit
 
 # To enable remote file access
-RUN sudo apt update && sudo apt install -y fuse rclone python3-pip
+RUN sudo apt update && sudo apt install -y fuse rclone python3-pip pipx
 
 # For read processing
-RUN python3 -m pip install --user --upgrade cutadapt
+# --break-system-packages ## needed for certain versions
+RUN python3 -m pip install --user --upgrade cutadapt 
+
+# For multi-omics stats [https://biofam.github.io/MOFA2/MEFISTO.html]
+# --break-system-packages ## needed for certain versions
+RUN python3 -m pip install --user --upgrade mofapy2
 
 # Install oligoarray for DECIPHER R package (needed for PCR primer design)
 RUN wget http://www.unafold.org/download/oligoarrayaux-3.8.1.tar.gz && \
@@ -25,17 +30,21 @@ RUN install2.r --error \
         here vegan patchwork ggrepel foreach BiocManager DiagrammeR ggbeeswarm corrr ggdendro \
         igraph Matrix data.table VennDiagram eulerr UpSetR Cairo ragg glue ggtext furrr \
         pheatmap forcats vroom future.apply indicspecies permute xlsx magick usedist janitor \
-        lubridate scales ggpubr lme4 lmerTest MuMIn gridExtra gtable ggalluvial gdata TreeDist \
-        mgcv reshape2 viridis ggridges ggforce ggmap maps tigris plotly concaveman heatmaply arrow \
+        lubridate scales lme4 MuMIn gridExtra gtable ggalluvial gdata TreeDist \
+        mgcv reshape2 viridis ggridges ggforce ggmap maps plotly heatmaply arrow \
         languageserver phytools ape unglue reticulate tidymodels PMA ggnewscale umap \
-        gganimate av gifski transformr qs ranger dbscan fpc POMS vip RPostgreSQL kableExtra ggprism \
-        openssl picante geomtextpath randomcoloR bio3d RcppAlgos httpgd ggh4x scico
+        av gifski qs ranger dbscan fpc POMS vip RPostgreSQL kableExtra ggprism \
+        openssl picante geomtextpath randomcoloR bio3d RcppAlgos httpgd ggh4x scico tidyquant parzer
+
+# Issues with installing these packages
+RUN install2.r --error ggpubr gganimate transformr concaveman tigris cooccur lmerTest
 
 # MonoPhy no-longer available on CRAN [may be temporary]
 
 RUN R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "microbiome", "metagenomeSeq", "decontam", "limma", "biomformat", "ALDEx2", "DESeq2", "ggtree", \
-        "KEGGgraph","org.Hs.eg.db", "KEGGREST", "AnnotationDbi", "pcaMethods", "DECIPHER", "ANCOMBC", "fgsea", "topGO", "ANCOMBC", "gage","clusterProfiler", "pathview"))'
+        "KEGGgraph","org.Hs.eg.db", "KEGGREST", "AnnotationDbi", "pcaMethods", "DECIPHER", "ANCOMBC", \
+        "fgsea", "topGO", "ANCOMBC", "gage","clusterProfiler", "pathview", "MOFA2"))'
         
 RUN R -e 'devtools::install_github("mikemc/speedyseq"); \
         devtools::install_github("tpq/propr"); \
