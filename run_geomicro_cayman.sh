@@ -20,7 +20,6 @@ directory=/var/lib/rstudio-server
 END
 
 apptainer exec \
-    --disable-cache \
     --env XDG_DATA_HOME=$XDG_DATA_HOME \
     --env R_LIBS_USER=/usr/local/lib/R/site-library \
     --env RSTUDIO_WHICH_R=/usr/local/bin/R \
@@ -28,6 +27,7 @@ apptainer exec \
     --env SINGULARITYENV_USER=$USER \
     --bind /geomicro:/geomicro,/nfs:/nfs,${workdir}/run:/run,${workdir}/var-lib-rstudio-server:/var/lib/rstudio-server,${workdir}/database.conf:/etc/rstudio/database.conf,/etc/group:/etc/group,/etc/passwd:/etc/passwd \
     --cleanenv \
+    --disable-cache \
     docker://eandersk/r_microbiome \
     rserver \
         --auth-none=0 \
@@ -35,6 +35,6 @@ apptainer exec \
         --auth-stay-signed-in-days=30 \
         --auth-timeout-minutes=0 \
         --server-user=$USER \
-        --www-port 4787
+        --www-port 8382
 
-# --www-address=127.0.0.1 # Use to access only from localhost via ssh port forwarding
+# --www-address=127.0.0.1 # to only make available on local machine (access via ssh port-forwarding)
