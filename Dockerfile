@@ -80,6 +80,8 @@ RUN /bin/bash -c "wget https://github.com/sylabs/singularity/releases/download/v
     conda clean --all -y && \
     source activate snakemake"
 
+RUN sudo apt update && sudo apt install -y chromium-browser
+
 COPY Dockerfile /Dockerfile
 
 #devtools::install_github("d-mcgrath/MetaPathPredict/MetaPredict") # Seems like this was converted to a python project?
