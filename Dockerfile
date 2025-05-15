@@ -80,7 +80,10 @@ RUN /bin/bash -c "wget https://github.com/sylabs/singularity/releases/download/v
     conda clean --all -y && \
     source activate snakemake"
 
-RUN sudo apt update && sudo apt install -y chromium-browser
+# installing google-chrome-stable 
+RUN curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    apt-get install -y ./google-chrome-stable_current_amd64.deb && \
+    rm google-chrome-stable_current_amd64.deb
 
 COPY Dockerfile /Dockerfile
 
