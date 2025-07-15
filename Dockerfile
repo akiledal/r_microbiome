@@ -35,12 +35,14 @@ RUN install2.r --error \
         mgcv reshape2 viridis ggridges ggforce ggmap maps plotly heatmaply arrow \
         languageserver phytools ape unglue reticulate tidymodels PMA ggnewscale umap \
         av qs ranger dbscan fpc POMS vip RPostgreSQL kableExtra ggprism \
-        openssl picante geomtextpath randomcoloR bio3d RcppAlgos ggh4x scico tidyquant parzer \
-        ggpubr gganimate transformr concaveman tigris cooccur lmerTest conflicted legendry geneviewer \
-        broom.mixed emmeans micropan circlize tidyquant
+        openssl picante geomtextpath randomcoloR bio3d RcppAlgos ggh4x scico tidyquant \
+        ggpubr gganimate transformr concaveman tigris lmerTest conflicted legendry geneviewer \
+        broom.mixed emmeans micropan circlize tidyquant micropan gt webshot2 chromote \
+        coda mvtnorm loo dagitty shape connections geonames hoardr isdparser pins rjson \
+        shinycssloaders shinyWidgets
 
 # Issues with installing these packages
-#RUN install2.r --error 
+#RUN install2.r --error parzer cooccur
 
 # MonoPhy no-longer available on CRAN [may be temporary]
 
@@ -64,7 +66,10 @@ RUN R -e 'devtools::install_github("r-rust/gifski"); \
         devtools::install_github("oschwery/MonoPhy", force=TRUE); \
         devtools::install_github("jeffkimbrel/qSIP2"); \
         remotes::install_github("nx10/httpgd"); \
-        devtools::install_github("r-rust/gifski")'
+        devtools::install_github("rmcelreath/rethinking"); \
+        devtools::install_github("griffithdan/cooccur"); \
+        devtools::install_github("ropensci/parzer"); \
+        '
 
 ADD . /tmp/repo
 WORKDIR /tmp/repo
