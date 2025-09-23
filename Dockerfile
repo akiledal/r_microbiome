@@ -39,7 +39,8 @@ RUN install2.r --error \
         ggpubr gganimate transformr concaveman tigris lmerTest conflicted legendry geneviewer \
         broom.mixed emmeans micropan circlize tidyquant micropan gt webshot2 chromote \
         coda mvtnorm loo dagitty shape connections geonames hoardr isdparser pins rjson \
-        shinycssloaders shinyWidgets
+        shinycssloaders shinyWidgets ggrastr ggfortify xgboost ggExtra gggenes gggenomes hexbin \
+        connections ggstream gratia dunn.test caret rpart.plot rpart ggrastr
 
 # Issues with installing these packages
 #RUN install2.r --error parzer cooccur
@@ -50,7 +51,7 @@ RUN R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "microbiome", "metagenomeSeq", "decontam", "limma", "biomformat", "ALDEx2", "DESeq2", "ggtree", \
         "KEGGgraph","org.Hs.eg.db", "KEGGREST", "AnnotationDbi", "pcaMethods", "DECIPHER", "ANCOMBC", \
         "fgsea", "topGO", "ANCOMBC", "gage","clusterProfiler", "pathview", "MOFA2", "Rsamtools", "Rsubread", \
-        "basilisk"))'
+        "basilisk", "tximport", "ggkegg", "variancePartition"))'
         
 RUN R -e 'devtools::install_github("r-rust/gifski"); \
         devtools::install_github("mikemc/speedyseq"); \
@@ -59,7 +60,6 @@ RUN R -e 'devtools::install_github("r-rust/gifski"); \
         devtools::install_github("jbisanz/qiime2R"); \
         devtools::install_github("fbreitwieser/pavian"); \
         devtools::install_github("grunwaldlab/metacoder"); \
-        devtools::install_github("vmikk/metagMisc"); \
         devtools::install_github("stevenpawley/colino"); \
         devtools::install_github("r-dbi/odbc"); \
         devtools::install_github("jiabowang/GAPIT", force=TRUE); \
@@ -69,24 +69,32 @@ RUN R -e 'devtools::install_github("r-rust/gifski"); \
         devtools::install_github("rmcelreath/rethinking"); \
         devtools::install_github("griffithdan/cooccur"); \
         devtools::install_github("ropensci/parzer"); \
+        BiocManager::install("variancePartition") \
         '
+
+        #devtools::install_github("vmikk/metagMisc"); \
 
 ADD . /tmp/repo
 WORKDIR /tmp/repo
 ENV PATH /opt/conda/bin:${PATH}
 ENV LANG C.UTF-8
 ENV SHELL /bin/bash
-RUN /bin/bash -c "wget https://github.com/sylabs/singularity/releases/download/v4.1.2/singularity-ce_4.1.2-jammy_amd64.deb -O /tmp/singularity.deb && \
-    sudo apt install -y wget bzip2 ca-certificates gnupg2 squashfs-tools git /tmp/singularity.deb && \
-    wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-    bash Miniconda3-latest-Linux-x86_64.sh -b -p /opt/conda && \
-    rm Miniconda3-latest-Linux-x86_64.sh && \
-    conda create -c conda-forge -n snakemake bioconda::snakemake bioconda::snakemake-minimal --only-deps && \
-    conda clean --all -y && \
-    source activate snakemake"
+# RUN /bin/bash -c "wget https://github.com/sylabs/singularity/releases/download/v4.1.2/singularity-ce_4.1.2-jammy_amd64.deb -O /tmp/singularity.deb && \
+#     apt-get update && \
+#     apt install -y wget bzip2 ca-certificates gnupg2 squashfs-tools git /tmp/singularity.deb && \
+#     wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+#     bash Miniconda3-latest-Linux-x86_64.sh -b -p /opt/conda && \
+#     rm Miniconda3-latest-Linux-x86_64.sh && \
+#     conda config --remove channels 'https://repo.anaconda.com/pkgs/main' && conda config --remove channels 'https://repo.anaconda.com/pkgs/r' && \
+#     conda create -c conda-forge -n snakemake bioconda::snakemake bioconda::snakemake-minimal --only-deps && \
+#     conda clean --all -y"
+
+# ENV CONDA_DEFAULT_ENV=snakemake
+# ENV PATH=/opt/conda/envs/snakemake/bin:$PATH
 
 # installing google-chrome-stable 
 RUN curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    apt-get update && \
     apt-get install -y ./google-chrome-stable_current_amd64.deb && \
     rm google-chrome-stable_current_amd64.deb
 
@@ -96,4 +104,4 @@ COPY Dockerfile /Dockerfile
 #devtools::install_github("https://github.com/eqkuiper/ANCOMBC", ref="RELEASE_3_16", quiet = FALSE); \
 
 # If you want to just add a package or two to a recently built image, much faster to add them as new layers here before migrating into the main step
-#RUN install2.r --error 
+#RUN install2.r --error  
