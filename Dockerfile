@@ -40,7 +40,7 @@ RUN install2.r --error \
         broom.mixed emmeans micropan circlize tidyquant micropan gt webshot2 chromote \
         coda mvtnorm loo dagitty shape connections geonames hoardr isdparser pins rjson \
         shinycssloaders shinyWidgets ggrastr ggfortify xgboost ggExtra gggenes gggenomes hexbin \
-        connections ggstream gratia dunn.test caret rpart.plot rpart ggrastr
+        connections ggstream gratia dunn.test caret rpart.plot rpart ggrastr carrier breakaway ggvenn
 
 # Issues with installing these packages
 #RUN install2.r --error parzer cooccur
