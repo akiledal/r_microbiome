@@ -40,7 +40,8 @@ RUN install2.r --error \
         broom.mixed emmeans micropan circlize tidyquant micropan gt webshot2 chromote \
         coda mvtnorm loo dagitty shape connections geonames hoardr isdparser pins rjson \
         shinycssloaders shinyWidgets ggrastr ggfortify xgboost ggExtra gggenes gggenomes hexbin \
-        connections ggstream gratia dunn.test caret rpart.plot rpart ggrastr carrier breakaway ggvenn
+        connections gratia dunn.test caret rpart.plot rpart ggrastr carrier ggvenn \
+        DT ggraph
 
 # Issues with installing these packages
 #RUN install2.r --error parzer cooccur
@@ -51,7 +52,7 @@ RUN R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "microbiome", "metagenomeSeq", "decontam", "limma", "biomformat", "ALDEx2", "DESeq2", "ggtree", \
         "KEGGgraph","org.Hs.eg.db", "KEGGREST", "AnnotationDbi", "pcaMethods", "DECIPHER", "ANCOMBC", \
         "fgsea", "topGO", "ANCOMBC", "gage","clusterProfiler", "pathview", "MOFA2", "Rsamtools", "Rsubread", \
-        "basilisk", "tximport", "ggkegg", "variancePartition"))'
+        "basilisk", "tximport", "ggkegg", "variancePartition", "ComplexHeatmap", "escamero/mirlyn"))'
         
 RUN R -e 'devtools::install_github("r-rust/gifski"); \
         devtools::install_github("mikemc/speedyseq"); \
@@ -69,7 +70,14 @@ RUN R -e 'devtools::install_github("r-rust/gifski"); \
         devtools::install_github("rmcelreath/rethinking"); \
         devtools::install_github("griffithdan/cooccur"); \
         devtools::install_github("ropensci/parzer"); \
-        BiocManager::install("variancePartition") \
+        BiocManager::install("variancePartition"); \
+        devtools::install_github("r-dbi/odbc"); \
+        devtools::install_github("gauravsk/ranacapa"); \
+        devtools::install_github("adw96/breakaway"); \
+        devtools::install_github("adw96/DivNet"); \
+        devtools::install_github("david-barnett/microViz"); \
+        devtools::install_github("davidsjoberg/ggstream"); \
+        devtools::install_github("KarstensLab/microshades") \
         '
 
         #devtools::install_github("vmikk/metagMisc"); \
