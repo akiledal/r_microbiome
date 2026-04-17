@@ -6,8 +6,14 @@ LABEL maintainer="Anders Kiledal <akiledal@udel.edu>"
 # Used selectively when the rocker/geospatial builds are old
 #RUN /bin/sh -c /rocker_scripts/install_geospatial.sh # buildkit
 
-# To enable remote file access
-RUN sudo apt update && sudo apt install -y fuse rclone python3-pip pipx
+
+# Update system dependencies
+# rclone to enable remote file access
+RUN sudo apt update \
+    && sudo apt install -y fuse rclone python3-pip pipx libglpk-dev software-properties-common curl \
+    && sudo add-apt-repository ppa:deadsnakes/ppa \
+    && sudo apt-get update \
+    && sudo apt-get install -y python3.13 python3.13-dev python3.13-venv
 
 # For read processing
 # --break-system-packages ## needed for certain versions
@@ -41,7 +47,7 @@ RUN install2.r --error \
         coda mvtnorm loo dagitty shape connections geonames hoardr isdparser pins rjson \
         shinycssloaders shinyWidgets ggrastr ggfortify xgboost ggExtra gggenes gggenomes hexbin \
         connections gratia dunn.test caret rpart.plot rpart ggrastr carrier ggvenn \
-        DT ggraph
+        DT ggraph rstatix remotes
 
 # Issues with installing these packages
 #RUN install2.r --error parzer cooccur
@@ -52,7 +58,7 @@ RUN R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "microbiome", "metagenomeSeq", "decontam", "limma", "biomformat", "ALDEx2", "DESeq2", "ggtree", \
         "KEGGgraph","org.Hs.eg.db", "KEGGREST", "AnnotationDbi", "pcaMethods", "DECIPHER", "ANCOMBC", \
         "fgsea", "topGO", "ANCOMBC", "gage","clusterProfiler", "pathview", "MOFA2", "Rsamtools", "Rsubread", \
-        "basilisk", "tximport", "ggkegg", "variancePartition", "ComplexHeatmap", "escamero/mirlyn"))'
+        "basilisk", "tximport", "ggkegg", "variancePartition", "ComplexHeatmap"))'
         
 RUN R -e 'devtools::install_github("r-rust/gifski"); \
         devtools::install_github("mikemc/speedyseq"); \
@@ -66,11 +72,10 @@ RUN R -e 'devtools::install_github("r-rust/gifski"); \
         devtools::install_github("jiabowang/GAPIT", force=TRUE); \
         devtools::install_github("oschwery/MonoPhy", force=TRUE); \
         devtools::install_github("jeffkimbrel/qSIP2"); \
-        remotes::install_github("nx10/httpgd"); \
+        devtools::install_github("nx10/httpgd"); \
         devtools::install_github("rmcelreath/rethinking"); \
         devtools::install_github("griffithdan/cooccur"); \
         devtools::install_github("ropensci/parzer"); \
-        BiocManager::install("variancePartition"); \
         devtools::install_github("r-dbi/odbc"); \
         devtools::install_github("gauravsk/ranacapa"); \
         devtools::install_github("adw96/breakaway"); \
@@ -79,7 +84,7 @@ RUN R -e 'devtools::install_github("r-rust/gifski"); \
         devtools::install_github("davidsjoberg/ggstream"); \
         devtools::install_github("KarstensLab/microshades") \
         '
-
+        #devtools::install_github("escamero/mirlyn") \
         #devtools::install_github("vmikk/metagMisc"); \
 
 ADD . /tmp/repo
@@ -101,12 +106,18 @@ ENV SHELL /bin/bash
 # ENV PATH=/opt/conda/envs/snakemake/bin:$PATH
 
 # installing google-chrome-stable 
-RUN curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt-get update && \
+RUN apt-get update && \
+    curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     apt-get install -y ./google-chrome-stable_current_amd64.deb && \
     rm google-chrome-stable_current_amd64.deb
 
-COPY Dockerfile /Dockerfile
+# Install Python 3.13 via deadsnakes PPA
+# RUN apt-get update && apt-get install -y software-properties-common && \
+#     add-apt-repository ppa:deadsnakes/ppa && \
+#     apt-get update && \
+#     apt-get install -y python3.13 python3.13-venv python3.13-dev python3-pip
+
+# COPY Dockerfile /Dockerfile
 
 #devtools::install_github("d-mcgrath/MetaPathPredict/MetaPredict") # Seems like this was converted to a python project?
 #devtools::install_github("https://github.com/eqkuiper/ANCOMBC", ref="RELEASE_3_16", quiet = FALSE); \
