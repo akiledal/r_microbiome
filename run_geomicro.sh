@@ -2,6 +2,8 @@
 
 # Run rstudio server on the geomicro lab servers
 
+current_dir=$PWD
+
 cd $HOME
 
 export R_LIBS_USER="/usr/local/lib/R/site-library"
@@ -19,6 +21,8 @@ provider=sqlite
 directory=/var/lib/rstudio-server
 END
 
+apptainer build --fakeroot $current_dir/r_microbiome.sif docker://eandersk/r_microbiome
+
 apptainer exec \
     --disable-cache \
     --env XDG_DATA_HOME=$XDG_DATA_HOME \
@@ -28,7 +32,7 @@ apptainer exec \
     --env SINGULARITYENV_USER=$USER \
     --bind /geomicro:/geomicro,/nfs:/nfs,${workdir}/run:/run,${workdir}/var-lib-rstudio-server:/var/lib/rstudio-server,${workdir}/database.conf:/etc/rstudio/database.conf,/etc/group:/etc/group,/etc/passwd:/etc/passwd \
     --cleanenv \
-    docker://eandersk/r_microbiome \
+    $current_dir/r_microbiome.sif \
     rserver \
         --auth-none=0 \
         --auth-pam-helper-path=pam-helper \
