@@ -36,7 +36,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Export the SIF container file to the same directory the script is in.
+# If exporting the SIF container file, use the same directory the script is in.
 # This must run before `cd $HOME` below, since BASH_SOURCE may be a relative
 # path that would otherwise resolve against the wrong directory.
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
