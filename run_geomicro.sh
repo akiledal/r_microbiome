@@ -2,6 +2,12 @@
 
 # Run rstudio server on the geomicro lab servers
 
+# Export the SIF container file to the same directory the script is in.
+# This must run before `cd $HOME` below, since BASH_SOURCE may be a relative
+# path that would otherwise resolve against the wrong directory.
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+#script_dir=$(dirname "$0")
+
 cd $HOME
 
 export R_LIBS_USER="/usr/local/lib/R/site-library"
@@ -19,10 +25,20 @@ provider=sqlite
 directory=/var/lib/rstudio-server
 END
 
-# Export the SIF container file to the same directory the script is in
-script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+echo "script directory is: $script_dir"
+echo "Building container $script_dir/r_microbiome.sif"
 
-apptainer build --fakeroot $script_dir/r_microbiome.sif docker://eandersk/r_microbiome
+export PROOT_NO_SECCOMP=1
+
+apptainer build --ignore-proot $script_dir/r_microbiome.sif docker://eandersk/r_microbiome
+
+# To use mEQO's Gurobi solver, provide a license file (free for academic use:
+# https://www.gurobi.com/academia/academic-program-and-licenses/) and uncomment below,
+# adding `--env GRB_LICENSE_FILE=/opt/gurobi/gurobi.lic` and the bind mount to the
+# apptainer exec call:
+#   --env GRB_LICENSE_FILE=/opt/gurobi/gurobi.lic \
+#   --bind /path/to/your/gurobi.lic:/opt/gurobi/gurobi.lic \
+
 
 apptainer exec \
     --disable-cache \
@@ -31,7 +47,7 @@ apptainer exec \
     --env RSTUDIO_WHICH_R=/usr/local/bin/R \
     --env SINGULARITYENV_PASSWORD=r_login \
     --env SINGULARITYENV_USER=$USER \
-    --bind /geomicro:/geomicro,/nfs:/nfs,${workdir}/run:/run,${workdir}/var-lib-rstudio-server:/var/lib/rstudio-server,${workdir}/database.conf:/etc/rstudio/database.conf,/etc/group:/etc/group,/etc/passwd:/etc/passwd \
+    --bind /geomicro:/geomicro,/nfs:/nfs,${workdir}/run:/run,${workdir}/var-lib-rstudio-server:/var/lib/rstudio-server,${workdir}/database.conf:/etc/rstudio/database.conf \
     --cleanenv \
     $script_dir/r_microbiome.sif \
     rserver \
