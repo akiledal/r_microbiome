@@ -22,7 +22,7 @@ RUN python3 -m pip install --upgrade cutadapt --break-system-packages
 # For multi-omics stats [https://biofam.github.io/MOFA2/MEFISTO.html]
 # --break-system-packages ## needed for certain versions
 RUN sudo apt remove -y python3-packaging
-RUN python3 -m pip install --upgrade mofapy2 --break-system-packages
+RUN python3 -m pip install --upgrade --ignore-installed mofapy2 --break-system-packages
 
 # Install oligoarray for DECIPHER R package (needed for PCR primer design)
 RUN wget http://www.unafold.org/download/oligoarrayaux-3.8.1.tar.gz && \
@@ -32,10 +32,28 @@ RUN wget http://www.unafold.org/download/oligoarrayaux-3.8.1.tar.gz && \
     make && \
     sudo make install
 
+# Install Gurobi optimizer + its R interface (needed by mEQO's BLS solver)
+# No license is baked into the image - it's tied to a machine/user, not the image.
+# Mount one at runtime and point GRB_LICENSE_FILE at it, e.g.:
+#   apptainer exec --env GRB_LICENSE_FILE=/opt/gurobi/gurobi.lic --bind /host/gurobi.lic:/opt/gurobi/gurobi.lic ...
+# Free academic licenses: https://www.gurobi.com/academia/academic-program-and-licenses/
+ENV GRB_VERSION=12.0.3
+ENV GRB_SHORT_VERSION=12.0
+RUN wget -q https://packages.gurobi.com/${GRB_SHORT_VERSION}/gurobi${GRB_VERSION}_linux64.tar.gz \
+    && tar xzf gurobi${GRB_VERSION}_linux64.tar.gz -C /opt \
+    && mv /opt/gurobi*/ /opt/gurobi \
+    && rm gurobi${GRB_VERSION}_linux64.tar.gz
+ENV GUROBI_HOME=/opt/gurobi/linux64
+ENV PATH=${GUROBI_HOME}/bin:${PATH}
+ENV LD_LIBRARY_PATH=${GUROBI_HOME}/lib:${LD_LIBRARY_PATH}
+RUN install2.r --error slam
+RUN R CMD INSTALL ${GUROBI_HOME}/R/gurobi_*.tar.gz
+
 # Install other R libraries
 RUN install2.r --error \
         here vegan patchwork ggrepel foreach BiocManager DiagrammeR ggbeeswarm corrr ggdendro \
         igraph Matrix data.table VennDiagram eulerr UpSetR Cairo ragg glue ggtext furrr \
+        GA doParallel \
         pheatmap forcats vroom future.apply indicspecies permute xlsx magick usedist janitor \
         lubridate scales lme4 MuMIn gridExtra gtable ggalluvial gdata TreeDist \
         mgcv reshape2 viridis ggridges ggforce ggmap maps plotly heatmaply arrow \
@@ -82,7 +100,8 @@ RUN R -e 'devtools::install_github("r-rust/gifski"); \
         devtools::install_github("adw96/DivNet"); \
         devtools::install_github("david-barnett/microViz"); \
         devtools::install_github("davidsjoberg/ggstream"); \
-        devtools::install_github("KarstensLab/microshades") \
+        devtools::install_github("KarstensLab/microshades"); \
+        devtools::install_github("Xiaoyu2425/mEQO") \
         '
         #devtools::install_github("escamero/mirlyn") \
         #devtools::install_github("vmikk/metagMisc"); \
