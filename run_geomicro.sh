@@ -86,6 +86,9 @@ export APPTAINER_IGNORE_PROOT=1
 #   --env GRB_LICENSE_FILE=/opt/gurobi/gurobi.lic \
 #   --bind /path/to/your/gurobi.lic:/opt/gurobi/gurobi.lic \
 
+# --dns 127.0.0.53,1.1.1.1,1.0.0.1  is required (do not remove), at least for now. Refers to system DNS server, others provided as backups.
+
+
 apptainer exec \
     $disable_cache_flag \
     --env XDG_DATA_HOME=$XDG_DATA_HOME \
@@ -94,6 +97,7 @@ apptainer exec \
     --env SINGULARITYENV_PASSWORD=r_login \
     --env SINGULARITYENV_USER=$USER \
     --bind /geomicro:/geomicro,/nfs:/nfs,${workdir}/run:/run,${workdir}/var-lib-rstudio-server:/var/lib/rstudio-server,${workdir}/database.conf:/etc/rstudio/database.conf,$script_dir/rsession.conf:/etc/rstudio/rsession.conf \
+    --dns 127.0.0.53,1.1.1.1,1.0.0.1 \
     --cleanenv \
     docker://eandersk/r_microbiome \
     rserver \
