@@ -62,6 +62,19 @@ END
 echo "script directory is: $script_dir"
 echo "Pulling and running latest container from docker://eandersk/r_microbiome"
 
+# Look up this server's RStudio port from servers.conf (hostname:port per line),
+# falling back to the "default" entry if this host isn't listed.
+server_config="$script_dir/servers.conf"
+server_name=$(hostname -s)
+www_port=$(awk -F: -v host="$server_name" '
+    /^[[:space:]]*#/ || /^[[:space:]]*$/ { next }
+    { gsub(/[ \t]/, "", $1); gsub(/[ \t]/, "", $2); if ($1 == host) { print $2; found=1; exit } }
+' "$server_config")
+if [[ -z "$www_port" ]]; then
+    www_port=$(awk -F: '$1 == "default" { gsub(/[ \t]/, "", $2); print $2; exit }' "$server_config")
+fi
+echo "Detected server '$server_name', using RStudio port $www_port (see $server_config)"
+
 # Modify how singularity is run
 export PROOT_NO_SECCOMP=1
 export APPTAINER_IGNORE_PROOT=1
@@ -89,6 +102,6 @@ apptainer exec \
         --auth-stay-signed-in-days=30 \
         --auth-timeout-minutes=0 \
         --server-user=$USER \
-        --www-port 4787
+        --www-port $www_port
 
 # --www-address=127.0.0.1 # Use to access only from localhost via ssh port forwarding
