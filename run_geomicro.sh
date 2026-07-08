@@ -26,11 +26,11 @@ directory=/var/lib/rstudio-server
 END
 
 echo "script directory is: $script_dir"
-echo "Building container $script_dir/r_microbiome.sif"
+echo "Pulling and running latest container from docker://eandersk/r_microbiome"
 
+# Modify how singularity is run
 export PROOT_NO_SECCOMP=1
-
-apptainer build --ignore-proot $script_dir/r_microbiome.sif docker://eandersk/r_microbiome
+export APPTAINER_IGNORE_PROOT=1
 
 # To use mEQO's Gurobi solver, provide a license file (free for academic use:
 # https://www.gurobi.com/academia/academic-program-and-licenses/) and uncomment below,
@@ -49,7 +49,7 @@ apptainer exec \
     --env SINGULARITYENV_USER=$USER \
     --bind /geomicro:/geomicro,/nfs:/nfs,${workdir}/run:/run,${workdir}/var-lib-rstudio-server:/var/lib/rstudio-server,${workdir}/database.conf:/etc/rstudio/database.conf,$script_dir/rsession.conf:/etc/rstudio/rsession.conf \
     --cleanenv \
-    $script_dir/r_microbiome.sif \
+    docker://eandersk/r_microbiome \
     rserver \
         --auth-none=0 \
         --auth-pam-helper-path=pam-helper \
