@@ -47,7 +47,7 @@ apptainer exec \
     --env RSTUDIO_WHICH_R=/usr/local/bin/R \
     --env SINGULARITYENV_PASSWORD=r_login \
     --env SINGULARITYENV_USER=$USER \
-    --bind /geomicro:/geomicro,/nfs:/nfs,${workdir}/run:/run,${workdir}/var-lib-rstudio-server:/var/lib/rstudio-server,${workdir}/database.conf:/etc/rstudio/database.conf \
+    --bind /geomicro:/geomicro,/nfs:/nfs,${workdir}/run:/run,${workdir}/var-lib-rstudio-server:/var/lib/rstudio-server,${workdir}/database.conf:/etc/rstudio/database.conf,$script_dir/rsession.conf:/etc/rstudio/rsession.conf \
     --cleanenv \
     $script_dir/r_microbiome.sif \
     rserver \
