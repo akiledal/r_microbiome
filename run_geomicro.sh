@@ -2,6 +2,40 @@
 
 # Run rstudio server on the geomicro lab servers
 
+usage() {
+    cat <<EOF
+Usage: $(basename "$0") [OPTIONS]
+
+Pulls and runs the eandersk/r_microbiome RStudio Server container via Apptainer.
+
+Options:
+  --use-cache   Reuse Apptainer's local image cache instead of forcing a fresh
+                pull/convert of docker://eandersk/r_microbiome on every run
+                (default: always pull fresh, i.e. --disable-cache).
+  -h, --help    Show this help message and exit.
+EOF
+}
+
+disable_cache_flag="--disable-cache"
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --use-cache)
+            disable_cache_flag=""
+            shift
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1" >&2
+            usage
+            exit 1
+            ;;
+    esac
+done
+
 # Export the SIF container file to the same directory the script is in.
 # This must run before `cd $HOME` below, since BASH_SOURCE may be a relative
 # path that would otherwise resolve against the wrong directory.
@@ -39,9 +73,8 @@ export APPTAINER_IGNORE_PROOT=1
 #   --env GRB_LICENSE_FILE=/opt/gurobi/gurobi.lic \
 #   --bind /path/to/your/gurobi.lic:/opt/gurobi/gurobi.lic \
 
-
 apptainer exec \
-    --disable-cache \
+    $disable_cache_flag \
     --env XDG_DATA_HOME=$XDG_DATA_HOME \
     --env R_LIBS_USER=/usr/local/lib/R/site-library \
     --env RSTUDIO_WHICH_R=/usr/local/bin/R \
