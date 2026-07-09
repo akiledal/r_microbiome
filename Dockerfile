@@ -58,7 +58,7 @@ RUN install2.r --error \
         lubridate scales lme4 MuMIn gridExtra gtable ggalluvial gdata TreeDist \
         mgcv reshape2 viridis ggridges ggforce ggmap maps plotly heatmaply arrow \
         languageserver phytools ape unglue reticulate tidymodels PMA ggnewscale umap \
-        av ranger dbscan fpc POMS vip RPostgreSQL kableExtra ggprism \
+        av ranger dbscan fpc POMS RPostgreSQL kableExtra ggprism \
         openssl picante geomtextpath randomcoloR bio3d RcppAlgos ggh4x scico tidyquant \
         ggpubr gganimate transformr concaveman tigris lmerTest conflicted legendry geneviewer \
         broom.mixed emmeans micropan circlize gt webshot2 chromote \
@@ -95,6 +95,7 @@ RUN R -e 'devtools::install_github("r-rust/gifski"); \
         devtools::install_github("griffithdan/cooccur"); \
         devtools::install_github("ropensci/parzer"); \
         devtools::install_github("gauravsk/ranacapa"); \
+        devtools::install_github("koalaverse/vip"); \
         devtools::install_github("adw96/breakaway"); \
         devtools::install_github("adw96/DivNet"); \
         devtools::install_github("david-barnett/microViz"); \
