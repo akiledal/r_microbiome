@@ -61,10 +61,10 @@ RUN install2.r --error \
         av ranger dbscan fpc POMS vip RPostgreSQL kableExtra ggprism \
         openssl picante geomtextpath randomcoloR bio3d RcppAlgos ggh4x scico tidyquant \
         ggpubr gganimate transformr concaveman tigris lmerTest conflicted legendry geneviewer \
-        broom.mixed emmeans micropan circlize tidyquant micropan gt webshot2 chromote \
+        broom.mixed emmeans micropan circlize gt webshot2 chromote \
         coda mvtnorm loo dagitty shape connections geonames hoardr isdparser pins rjson \
         shinycssloaders shinyWidgets ggrastr ggfortify xgboost ggExtra gggenes gggenomes hexbin \
-        connections gratia dunn.test caret rpart.plot rpart ggrastr carrier ggvenn \
+        gratia dunn.test caret rpart.plot rpart carrier ggvenn \
         DT ggraph rstatix remotes
 
 # Issues with installing these packages
@@ -75,7 +75,7 @@ RUN install2.r --error \
 RUN R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "microbiome", "metagenomeSeq", "decontam", "limma", "biomformat", "ALDEx2", "DESeq2", "ggtree", \
         "KEGGgraph","org.Hs.eg.db", "KEGGREST", "AnnotationDbi", "pcaMethods", "DECIPHER", "ANCOMBC", \
-        "fgsea", "topGO", "ANCOMBC", "gage","clusterProfiler", "pathview", "MOFA2", "Rsamtools", "Rsubread", \
+        "fgsea", "topGO", "gage","clusterProfiler", "pathview", "MOFA2", "Rsamtools", "Rsubread", \
         "basilisk", "tximport", "ggkegg", "variancePartition", "ComplexHeatmap"))'
         
 RUN R -e 'devtools::install_github("r-rust/gifski"); \
@@ -94,7 +94,6 @@ RUN R -e 'devtools::install_github("r-rust/gifski"); \
         devtools::install_github("rmcelreath/rethinking"); \
         devtools::install_github("griffithdan/cooccur"); \
         devtools::install_github("ropensci/parzer"); \
-        devtools::install_github("r-dbi/odbc"); \
         devtools::install_github("gauravsk/ranacapa"); \
         devtools::install_github("adw96/breakaway"); \
         devtools::install_github("adw96/DivNet"); \
@@ -124,7 +123,7 @@ ENV SHELL /bin/bash
 # ENV CONDA_DEFAULT_ENV=snakemake
 # ENV PATH=/opt/conda/envs/snakemake/bin:$PATH
 
-# installing google-chrome-stable 
+# installing google-chrome-stable
 RUN apt-get update && \
     curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     apt-get install -y ./google-chrome-stable_current_amd64.deb && \
