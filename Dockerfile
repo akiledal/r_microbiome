@@ -65,7 +65,10 @@ RUN install2.r --error \
         coda mvtnorm loo dagitty shape connections geonames hoardr isdparser pins rjson \
         shinycssloaders shinyWidgets ggrastr ggfortify xgboost ggExtra gggenes gggenomes hexbin \
         gratia dunn.test caret rpart.plot rpart carrier ggvenn \
-        DT ggraph rstatix remotes
+        DT ggraph rstatix remotes ggpmisc rgbif gifski fastcluster exactRankTests clustur \
+        geometry ggpp gtsummary hypervolume jomo mice maxstat ordinal pan pbapply pdist \
+        pracma rnaturalearth skimr survminer tidycmprsk ucminf nls2 oai unigd \
+        rJava brms rstan bayesplot cowplot ggthemes spdep zoo bartMachine bartMachineJARs fitdistrplus
 
 # Issues with installing these packages
 #RUN install2.r --error parzer cooccur
@@ -78,8 +81,7 @@ RUN R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "fgsea", "topGO", "gage","clusterProfiler", "pathview", "MOFA2", "Rsamtools", "Rsubread", \
         "basilisk", "tximport", "ggkegg", "variancePartition", "ComplexHeatmap"))'
         
-RUN R -e 'devtools::install_github("r-rust/gifski"); \
-        devtools::install_github("mikemc/speedyseq"); \
+RUN R -e 'devtools::install_github("mikemc/speedyseq"); \
         devtools::install_github("tpq/propr"); \
         devtools::install_github("zdk123/SpiecEasi"); \
         devtools::install_github("jbisanz/qiime2R"); \
@@ -91,8 +93,10 @@ RUN R -e 'devtools::install_github("r-rust/gifski"); \
         devtools::install_github("oschwery/MonoPhy", force=TRUE); \
         devtools::install_github("jeffkimbrel/qSIP2"); \
         devtools::install_github("nx10/httpgd"); \
-        devtools::install_github("rmcelreath/rethinking"); \
-        devtools::install_github("griffithdan/cooccur"); \
+        devtools::install_github("rmcelreath/rethinking") \
+        '
+# Spltting up to prevent timeouts        
+RUN R -e 'devtools::install_github("griffithdan/cooccur"); \
         devtools::install_github("ropensci/parzer"); \
         devtools::install_github("gauravsk/ranacapa"); \
         devtools::install_github("koalaverse/vip"); \
@@ -101,7 +105,8 @@ RUN R -e 'devtools::install_github("r-rust/gifski"); \
         devtools::install_github("david-barnett/microViz"); \
         devtools::install_github("davidsjoberg/ggstream"); \
         devtools::install_github("KarstensLab/microshades"); \
-        devtools::install_github("Xiaoyu2425/mEQO") \
+        devtools::install_github("Xiaoyu2425/mEQO"); \
+        devtools::install_github("AlanInglis/bartMan") \
         '
         #devtools::install_github("escamero/mirlyn") \
         #devtools::install_github("vmikk/metagMisc"); \
@@ -135,6 +140,10 @@ RUN apt-get update && \
 #     add-apt-repository ppa:deadsnakes/ppa && \
 #     apt-get update && \
 #     apt-get install -y python3.13 python3.13-venv python3.13-dev python3-pip
+
+# Java + Bayesian modeling stack (rJava/BART for microcystin models, brms/rstan for
+# bloom phenology GAMMs, e.g. github.com/isalain/WLE_microcystin and Zenodo 10.5281/zenodo.13625365)
+RUN sudo apt update && sudo apt install -y default-jdk && sudo R CMD javareconf
 
 # COPY Dockerfile /Dockerfile
 
