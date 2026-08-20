@@ -148,6 +148,23 @@ RUN apt-get update && \
 # bloom phenology GAMMs, e.g. github.com/isalain/WLE_microcystin and Zenodo 10.5281/zenodo.13625365)
 RUN sudo apt update && sudo apt install -y default-jdk && sudo R CMD javareconf
 
+# mzmine (LC-MS feature detection/alignment)
+# Needs a free mzmine account login at runtime: generate a .mzuser token once
+# with `mzmine -login-console`, then pass it via `-user /path/to/token.mzuser`
+# (mount the token file into the container - do not bake credentials into the image).
+# mzmine's postinst runs `xdg-desktop-menu install`, which aborts the whole
+# package install if /etc/xdg/menus isn't present and writable - true in this
+# minimal, display-less image, so pre-create the dirs it expects.
+# libgl1/libgtk-3-0/libxtst6 are the runtime libs mzmine's docs list as needed
+# for its bundled JavaFX toolkit to initialize even in CLI/batch mode.
+RUN sudo mkdir -p /etc/xdg/menus /usr/share/desktop-directories /usr/share/applications \
+    && sudo apt-get update \
+    && sudo apt-get install -y libgl1 libgtk-3-0 libxtst6 \
+    && wget -qO mzmine.deb "$(curl -s https://api.github.com/repos/mzmine/mzmine/releases/latest \
+        | grep browser_download_url | grep amd64.deb | cut -d '"' -f4)" \
+    && sudo apt-get install -y ./mzmine.deb \
+    && rm mzmine.deb
+
 # COPY Dockerfile /Dockerfile
 
 #devtools::install_github("d-mcgrath/MetaPathPredict/MetaPredict") # Seems like this was converted to a python project?
