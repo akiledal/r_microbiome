@@ -138,11 +138,6 @@ RUN apt-get update && \
     apt-get install -y ./google-chrome-stable_current_amd64.deb && \
     rm google-chrome-stable_current_amd64.deb
 
-# Install Python 3.13 via deadsnakes PPA
-# RUN apt-get update && apt-get install -y software-properties-common && \
-#     add-apt-repository ppa:deadsnakes/ppa && \
-#     apt-get update && \
-#     apt-get install -y python3.13 python3.13-venv python3.13-dev python3-pip
 
 # Java + Bayesian modeling stack (rJava/BART for microcystin models, brms/rstan for
 # bloom phenology GAMMs, e.g. github.com/isalain/WLE_microcystin and Zenodo 10.5281/zenodo.13625365)
