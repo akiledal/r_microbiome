@@ -113,21 +113,24 @@ RUN R -e 'devtools::install_github("griffithdan/cooccur"); \
 
 ADD . /tmp/repo
 WORKDIR /tmp/repo
-ENV PATH /opt/conda/bin:${PATH}
 ENV LANG C.UTF-8
 ENV SHELL /bin/bash
-# RUN /bin/bash -c "wget https://github.com/sylabs/singularity/releases/download/v4.1.2/singularity-ce_4.1.2-jammy_amd64.deb -O /tmp/singularity.deb && \
-#     apt-get update && \
-#     apt install -y wget bzip2 ca-certificates gnupg2 squashfs-tools git /tmp/singularity.deb && \
-#     wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-#     bash Miniconda3-latest-Linux-x86_64.sh -b -p /opt/conda && \
-#     rm Miniconda3-latest-Linux-x86_64.sh && \
-#     conda config --remove channels 'https://repo.anaconda.com/pkgs/main' && conda config --remove channels 'https://repo.anaconda.com/pkgs/r' && \
-#     conda create -c conda-forge -n snakemake bioconda::snakemake bioconda::snakemake-minimal --only-deps && \
-#     conda clean --all -y"
 
-# ENV CONDA_DEFAULT_ENV=snakemake
-# ENV PATH=/opt/conda/envs/snakemake/bin:$PATH
+# Miniforge, so Snakemake can combine `container:` with `conda:` -- it runs
+# `conda info --json` inside the container and builds the rule's env there.
+# See https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html
+#
+# Deliberately NOT adding /opt/conda/bin to PATH: that would put conda's python3
+# ahead of the system one and shadow the interpreter existing rules rely on.
+# Symlinking just the two entry points Snakemake needs keeps python3 and R untouched.
+RUN wget -qO /tmp/miniforge.sh \
+        "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh" && \
+    bash /tmp/miniforge.sh -b -p /opt/conda && \
+    rm /tmp/miniforge.sh && \
+    /opt/conda/bin/conda config --set channel_priority strict && \
+    /opt/conda/bin/conda clean -a -y && \
+    ln -s /opt/conda/bin/conda /usr/local/bin/conda && \
+    ln -s /opt/conda/bin/mamba /usr/local/bin/mamba
 
 # installing google-chrome-stable
 RUN apt-get update && \
