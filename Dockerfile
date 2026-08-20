@@ -159,6 +159,7 @@ RUN sudo mkdir -p /etc/xdg/menus /usr/share/desktop-directories /usr/share/appli
         | grep browser_download_url | grep amd64.deb | cut -d '"' -f4)" \
     && sudo apt-get install -y ./mzmine.deb \
     && rm mzmine.deb
+ENV PATH=/opt/mzmine/bin:${PATH}
 
 # COPY Dockerfile /Dockerfile
 
