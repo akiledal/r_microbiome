@@ -10,10 +10,14 @@ LABEL maintainer="Anders Kiledal <akiledal@udel.edu>"
 # Update system dependencies
 # rclone to enable remote file access
 RUN sudo apt update \
-    && sudo apt install -y fuse rclone python3-pip pipx libglpk-dev software-properties-common curl \
+    && sudo apt install -y fuse rclone python3-pip pipx libglpk-dev software-properties-common curl libmagick++-6.q16-dev \
     && sudo add-apt-repository ppa:deadsnakes/ppa \
     && sudo apt-get update \
-    && sudo apt-get install -y python3.13 python3.13-dev python3.13-venv
+    && sudo apt-get install -y -o Acquire::Retries=10 python3.13 python3.13-dev python3.13-venv
+
+# For Java + Bayesian modeling stack (rJava/BART, brms/rstan
+# Must come before the R package installs so rJava links against the JDK
+RUN sudo apt update && sudo apt install -y default-jdk && sudo R CMD javareconf
 
 # For read processing
 # --break-system-packages ## needed for certain versions
@@ -68,7 +72,8 @@ RUN install2.r --error \
         DT ggraph rstatix remotes ggpmisc rgbif gifski fastcluster exactRankTests clustur \
         geometry ggpp gtsummary hypervolume jomo mice maxstat ordinal pan pbapply pdist \
         pracma rnaturalearth skimr survminer tidycmprsk ucminf nls2 oai unigd \
-        rJava brms rstan bayesplot cowplot ggthemes spdep zoo bartMachine bartMachineJARs fitdistrplus
+        rJava brms rstan bayesplot cowplot ggthemes spdep zoo bartMachine bartMachineJARs fitdistrplus \
+        aricode betapart DHARMa ecodist gllvm GUniFrac Hmsc mvabund NST pwr Rphylopars tidyxl
 
 # Issues with installing these packages
 #RUN install2.r --error parzer cooccur
@@ -79,21 +84,26 @@ RUN R -e 'BiocManager::install(c("phyloseq","dada2","ShortRead","Biostrings", \
         "microbiome", "metagenomeSeq", "decontam", "limma", "biomformat", "ALDEx2", "DESeq2", "ggtree", \
         "KEGGgraph","org.Hs.eg.db", "KEGGREST", "AnnotationDbi", "pcaMethods", "DECIPHER", "ANCOMBC", \
         "fgsea", "topGO", "gage","clusterProfiler", "pathview", "MOFA2", "Rsamtools", "Rsubread", \
-        "basilisk", "tximport", "ggkegg", "variancePartition", "ComplexHeatmap"))'
+        "basilisk", "tximport", "ggkegg", "variancePartition", "ComplexHeatmap", "DirichletMultinomial")); \
+        BiocManager::install("snpStats", INSTALL_opts = "--no-staged-install"); \
+        stopifnot(requireNamespace("ggkegg"), requireNamespace("snpStats"))'
         
 RUN R -e 'devtools::install_github("mikemc/speedyseq"); \
         devtools::install_github("tpq/propr"); \
+        devtools::install_github("zdk123/pulsar"); \
         devtools::install_github("zdk123/SpiecEasi"); \
         devtools::install_github("jbisanz/qiime2R"); \
         devtools::install_github("fbreitwieser/pavian"); \
         devtools::install_github("grunwaldlab/metacoder"); \
         devtools::install_github("stevenpawley/colino"); \
         devtools::install_github("r-dbi/odbc"); \
-        devtools::install_github("jiabowang/GAPIT", force=TRUE); \
+        devtools::install_github("jiabowang/GAPIT@242b9bcb212f6f823ea9112a37b5bfbd8f4020a5", force=TRUE); \
         devtools::install_github("oschwery/MonoPhy", force=TRUE); \
         devtools::install_github("jeffkimbrel/qSIP2"); \
         devtools::install_github("nx10/httpgd"); \
-        devtools::install_github("rmcelreath/rethinking") \
+        install.packages("cmdstanr", repos = c("https://stan-dev.r-universe.dev", getOption("repos"))); \
+        devtools::install_github("rmcelreath/rethinking"); \
+        stopifnot(requireNamespace("SpiecEasi"), requireNamespace("GAPIT"), requireNamespace("rethinking")) \
         '
 # Spltting up to prevent timeouts        
 RUN R -e 'devtools::install_github("griffithdan/cooccur"); \
@@ -106,7 +116,10 @@ RUN R -e 'devtools::install_github("griffithdan/cooccur"); \
         devtools::install_github("davidsjoberg/ggstream"); \
         devtools::install_github("KarstensLab/microshades"); \
         devtools::install_github("Xiaoyu2425/mEQO"); \
-        devtools::install_github("AlanInglis/bartMan") \
+        devtools::install_github("AlanInglis/bartMan"); \
+        devtools::install_github("Russel88/MicEco"); \
+        devtools::install_github("EWisely/REGATTA@0a68f7a3c4aeb0fd8bf3775db7d90b3b5a556a0d"); \
+        stopifnot(requireNamespace("MicEco"), requireNamespace("REGATTA"), requireNamespace("bartMan")) \
         '
         #devtools::install_github("escamero/mirlyn") \
         #devtools::install_github("vmikk/metagMisc"); \
@@ -139,10 +152,6 @@ RUN apt-get update && \
     rm google-chrome-stable_current_amd64.deb
 
 
-# Java + Bayesian modeling stack (rJava/BART for microcystin models, brms/rstan for
-# bloom phenology GAMMs, e.g. github.com/isalain/WLE_microcystin and Zenodo 10.5281/zenodo.13625365)
-RUN sudo apt update && sudo apt install -y default-jdk && sudo R CMD javareconf
-
 # mzmine (LC-MS feature detection/alignment)
 # Needs a free mzmine account login at runtime: generate a .mzuser token once
 # with `mzmine -login-console`, then pass it via `-user /path/to/token.mzuser`
@@ -167,4 +176,4 @@ ENV PATH=/opt/mzmine/bin:${PATH}
 #devtools::install_github("https://github.com/eqkuiper/ANCOMBC", ref="RELEASE_3_16", quiet = FALSE); \
 
 # If you want to just add a package or two to a recently built image, much faster to add them as new layers here before migrating into the main step
-#RUN install2.r --error  
+#RUN install2.r --error
