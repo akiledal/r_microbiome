@@ -1,4 +1,6 @@
-FROM rocker/geospatial
+# Pinned to an explicit R version so a base-image OS bump (e.g. Ubuntu 24.04 -> 26.04
+# with R 4.6.2) can't silently break the build. Bump deliberately.
+FROM rocker/geospatial:4.6.2
 #FROM rocker/verse
 LABEL maintainer="Anders Kiledal <akiledal@udel.edu>"
 
@@ -9,11 +11,11 @@ LABEL maintainer="Anders Kiledal <akiledal@udel.edu>"
 
 # Update system dependencies
 # rclone to enable remote file access
+# Ubuntu 26.04 ships Python 3.14 as python3; deadsnakes has no 26.04 builds, so
+# the separate python3.13 install was dropped. libmagick++ is now ImageMagick 7.
 RUN sudo apt update \
-    && sudo apt install -y fuse rclone python3-pip pipx libglpk-dev software-properties-common curl libmagick++-6.q16-dev \
-    && sudo add-apt-repository ppa:deadsnakes/ppa \
-    && sudo apt-get update \
-    && sudo apt-get install -y -o Acquire::Retries=10 python3.13 python3.13-dev python3.13-venv
+    && sudo apt install -y -o Acquire::Retries=10 fuse3 rclone python3-pip python3-dev python3-venv pipx \
+        libglpk-dev software-properties-common curl libmagick++-dev
 
 # For Java + Bayesian modeling stack (rJava/BART, brms/rstan
 # Must come before the R package installs so rJava links against the JDK
@@ -25,7 +27,7 @@ RUN python3 -m pip install --upgrade cutadapt --break-system-packages
 
 # For multi-omics stats [https://biofam.github.io/MOFA2/MEFISTO.html]
 # --break-system-packages ## needed for certain versions
-RUN sudo apt remove -y python3-packaging
+# (Removing python3-packaging also removes pip on 26.04; --ignore-installed below avoids the conflict instead)
 RUN python3 -m pip install --upgrade --ignore-installed mofapy2 --break-system-packages
 
 # Install oligoarray for DECIPHER R package (needed for PCR primer design)
@@ -49,7 +51,7 @@ RUN wget -q https://packages.gurobi.com/${GRB_SHORT_VERSION}/gurobi${GRB_VERSION
     && rm gurobi${GRB_VERSION}_linux64.tar.gz
 ENV GUROBI_HOME=/opt/gurobi/linux64
 ENV PATH=${GUROBI_HOME}/bin:${PATH}
-ENV LD_LIBRARY_PATH=${GUROBI_HOME}/lib:${LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH=${GUROBI_HOME}/lib
 RUN install2.r --error slam
 RUN R CMD INSTALL ${GUROBI_HOME}/R/gurobi_*.tar.gz
 
@@ -73,7 +75,8 @@ RUN install2.r --error \
         geometry ggpp gtsummary hypervolume jomo mice maxstat ordinal pan pbapply pdist \
         pracma rnaturalearth skimr survminer tidycmprsk ucminf nls2 oai unigd \
         rJava brms rstan bayesplot cowplot ggthemes spdep zoo bartMachine bartMachineJARs fitdistrplus \
-        aricode betapart DHARMa ecodist gllvm GUniFrac Hmsc mvabund NST pwr Rphylopars tidyxl
+        aricode betapart DHARMa ecodist gllvm GUniFrac Hmsc mvabund NST pwr Rphylopars tidyxl \
+        openxlsx2 ggspatial prettymapr rosm caper fuzzyjoin qualpalr lavaan
 
 # Issues with installing these packages
 #RUN install2.r --error parzer cooccur
@@ -106,6 +109,8 @@ RUN R -e 'devtools::install_github("mikemc/speedyseq"); \
         stopifnot(requireNamespace("SpiecEasi"), requireNamespace("GAPIT"), requireNamespace("rethinking")) \
         '
 # Spltting up to prevent timeouts        
+# MicEco: dependencies = FALSE skips its "Remotes: bioc::release/phyloseq" line, which
+# remotes 2.5.0 fails to parse ("Unknown remote type: bioc"); phyloseq is installed above.
 RUN R -e 'devtools::install_github("griffithdan/cooccur"); \
         devtools::install_github("ropensci/parzer"); \
         devtools::install_github("gauravsk/ranacapa"); \
@@ -117,17 +122,19 @@ RUN R -e 'devtools::install_github("griffithdan/cooccur"); \
         devtools::install_github("KarstensLab/microshades"); \
         devtools::install_github("Xiaoyu2425/mEQO"); \
         devtools::install_github("AlanInglis/bartMan"); \
-        devtools::install_github("Russel88/MicEco"); \
+        install.packages(c("doSNOW", "snow", "bbmle", "Hmisc", "abind")); \
+        devtools::install_github("Russel88/MicEco", dependencies = FALSE); \
         devtools::install_github("EWisely/REGATTA@0a68f7a3c4aeb0fd8bf3775db7d90b3b5a556a0d"); \
-        stopifnot(requireNamespace("MicEco"), requireNamespace("REGATTA"), requireNamespace("bartMan")) \
+        devtools::install_github("reptalex/phylofactor"); \
+        stopifnot(requireNamespace("MicEco"), requireNamespace("REGATTA"), requireNamespace("bartMan"), requireNamespace("phylofactor")) \
         '
         #devtools::install_github("escamero/mirlyn") \
         #devtools::install_github("vmikk/metagMisc"); \
 
 ADD . /tmp/repo
 WORKDIR /tmp/repo
-ENV LANG C.UTF-8
-ENV SHELL /bin/bash
+ENV LANG=C.UTF-8
+ENV SHELL=/bin/bash
 
 # Miniforge, so Snakemake can combine `container:` with `conda:` -- it runs
 # `conda info --json` inside the container and builds the rule's env there.
@@ -163,12 +170,26 @@ RUN apt-get update && \
 # for its bundled JavaFX toolkit to initialize even in CLI/batch mode.
 RUN sudo mkdir -p /etc/xdg/menus /usr/share/desktop-directories /usr/share/applications \
     && sudo apt-get update \
-    && sudo apt-get install -y libgl1 libgtk-3-0 libxtst6 \
+    && sudo apt-get install -y libgl1 libgtk-3-0t64 libxtst6 \
     && wget -qO mzmine.deb "$(curl -s https://api.github.com/repos/mzmine/mzmine/releases/latest \
         | grep browser_download_url | grep amd64.deb | cut -d '"' -f4)" \
     && sudo apt-get install -y ./mzmine.deb \
     && rm mzmine.deb
 ENV PATH=/opt/mzmine/bin:${PATH}
+
+# ffmpeg runtime libs for the R `av` package (video output for gganimate); the
+# binary install links libavfilter but the base image does not ship it
+RUN sudo apt-get update && sudo apt-get install -y libavfilter11
+
+# bartMachine needs Java's incubator vector module on JDK 21+ (otherwise:
+# NoClassDefFoundError: jdk/incubator/vector/Vector). Appended via an rJava load hook,
+# so it survives users setting their own options(java.parameters = "-Xmx...") first.
+RUN echo 'setHook(packageEvent("rJava", "onLoad"), function(...) { p <- getOption("java.parameters"); if (!any(grepl("jdk.incubator.vector", p, fixed = TRUE))) options(java.parameters = c(p, "--add-modules=jdk.incubator.vector")) })' \
+    >> /usr/local/lib/R/etc/Rprofile.site
+
+# Point reticulate at the system Python (which has mofapy2/cutadapt) instead of letting
+# it download its own uv-managed interpreter. Override per-project if needed.
+ENV RETICULATE_PYTHON=/usr/bin/python3
 
 # COPY Dockerfile /Dockerfile
 
